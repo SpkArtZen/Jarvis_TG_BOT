@@ -13,6 +13,11 @@ import yt_dlp
 
 dotenv.load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
+YOUTUBE_COOKIES = os.getenv("YOUTUBE_COOKIES")
+if YOUTUBE_COOKIES and not os.path.exists("cookies.txt"):
+    with open("cookies.txt", "w", encoding="utf-8") as f:
+        f.write(YOUTUBE_COOKIES)
+
 MAX_FILE_SIZE = 50 * 1024 * 1024  # 50 MB (ліміт Telegram Bot API)
 DOMAINS_FILE = "supported_domains.json"
 
@@ -84,7 +89,15 @@ def download_media(url: str, download_path: str) -> dict:
         'noplaylist': True,
         'quiet': True,
         'no_warnings': True,
+        'extractor_args': {
+            'youtube': {
+                'player_client': ['android', 'ios']
+            }
+        }
     }
+
+    if os.path.exists('cookies.txt'):
+        ydl_opts['cookiefile'] = 'cookies.txt'
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)

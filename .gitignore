@@ -1,3 +1,6 @@
 .env
 /downloads
 __pycache__
+cookies.txt
+*.mp4
+*.webm
